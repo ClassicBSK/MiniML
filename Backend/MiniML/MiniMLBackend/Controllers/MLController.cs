@@ -145,7 +145,7 @@ namespace MiniMLBackend.Controllers
         [HttpPost("validate/{simId}")]
         [Consumes("multipart/form-data")]
         [Authorize]
-        public async Task<IActionResult> ValidateCSV([FromForm] FileUpload upload,[FromRoute]int simId)
+        public async Task<IActionResult> ValidateCSV([FromForm]FileUpload upload,[FromRoute]int simId)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
             if (upload == null)
@@ -184,13 +184,13 @@ namespace MiniMLBackend.Controllers
             fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
 
             content.Add(fileContent, "valid_file", file.FileName);
-            content.Add(fileContent, "train_file", "train.csv");
-            //var csvString = datacontext.cSVFiles.Where(c => c.simId == s1.simId).FirstOrDefault().csvFile;
-            //var csvBytes = Encoding.UTF8.GetBytes(csvString);
-            //var trainMemoryStream = new MemoryStream(csvBytes); 
-            //var trainfileContent = new StreamContent(trainMemoryStream);
-            //trainfileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-            //content.Add(trainfileContent, "train_file", "train.csv");
+            //content.Add(fileContent, "train_file", "train.csv");
+            var csvString = datacontext.cSVFiles.Where(c => c.simId == s1.simId).FirstOrDefault().csvFile;
+            var csvBytes = Encoding.UTF8.GetBytes(csvString);
+            var trainMemoryStream = new MemoryStream(csvBytes);
+            var trainfileContent = new StreamContent(trainMemoryStream);
+            trainfileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+            content.Add(trainfileContent, "train_file", "train.csv");
 
 
 
@@ -205,7 +205,7 @@ namespace MiniMLBackend.Controllers
             }
             else
             {
-                return StatusCode((int)response.StatusCode, response.Content);
+                return StatusCode((int)response.StatusCode,"CSV files do not match");
             }
         }
 
