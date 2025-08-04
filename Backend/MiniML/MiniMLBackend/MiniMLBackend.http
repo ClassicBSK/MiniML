@@ -1,0 +1,6 @@
+@MiniMLBackend_HostAddress = http://localhost:5064
+
+GET {{MiniMLBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
