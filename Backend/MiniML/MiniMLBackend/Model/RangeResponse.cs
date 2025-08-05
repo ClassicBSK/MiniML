@@ -3,9 +3,9 @@
     
     public class RangeResponse
     {
-        public int train { get; set; }
-        public int test { get; set; }
-        public int valid { get; set; }
+        public Dictionary<string,int> trainData { get; set; }
+        public Dictionary<string, int> testData { get; set; }
+        public Dictionary<string, int> validData { get; set; }
 
     }
 }

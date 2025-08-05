@@ -149,3 +149,4 @@ D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\obj\Debug\net8.0\MiniMLBack
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\obj\Debug\net8.0\ref\MiniMLBackend.dll
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\Npgsql.dll
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\obj\Debug\net8.0\MiniMLBackend.sourcelink.json

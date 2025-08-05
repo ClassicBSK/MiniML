@@ -44,10 +44,9 @@ builder.Services.Configure<FormOptions>(options =>
 });
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 2_147_483_647; // 1 GB
+    serverOptions.Limits.MaxRequestBodySize = 2_147_483_647; 
 });
 var app = builder.Build();
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
