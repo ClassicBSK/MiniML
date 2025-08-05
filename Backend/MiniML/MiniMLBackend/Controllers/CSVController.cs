@@ -65,22 +65,58 @@ namespace MiniMLBackend.Controllers
             await file.CopyToAsync(memoryStream);
             memoryStream.Position = 0; 
 
-            string csvText;
-            using (var reader = new StreamReader(memoryStream, leaveOpen: true))
-            {
-                csvText = await reader.ReadToEndAsync();
-            }
-            memoryStream.Position = 0;
+            //string csvText;
+            //using (var reader = new StreamReader(memoryStream, leaveOpen: true))
+            //{
+            //    csvText = await reader.ReadToEndAsync();
+            //}
+            //memoryStream.Position = 0;
             using var httpClient = new HttpClient();
             using var content = new MultipartFormDataContent();
             var fileContent = new StreamContent(memoryStream);
             fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
 
             content.Add(fileContent, "file", file.FileName);
-            var response = await httpClient.PostAsync("http://host.docker.internal:6969/csvfiletest", content);
-            if (response.IsSuccessStatusCode)
+
+            //var response = await httpClient.PostAsync("http://host.docker.internal:6969/csvfiletest", content, HttpCompletionOption.ResponseHeadersRead);
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://host.docker.internal:6969/csvfilepush")
             {
-                var temp = await response.Content.ReadAsStringAsync();
+                Content = content
+            };
+
+            using var response = await httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                HttpContext.RequestAborted);
+
+            if (!response.IsSuccessStatusCode) {
+                return StatusCode((int)response.StatusCode, "FastAPI processing failed.");
+            }
+            using var fastApiStream = await response.Content.ReadAsStreamAsync();
+
+            using var outputMemoryStream = new MemoryStream();
+            await fastApiStream.CopyToAsync(outputMemoryStream);
+            outputMemoryStream.Position = 0;
+            string modifiedCsvText;
+            using (var reader = new StreamReader(outputMemoryStream, leaveOpen: true))
+            {
+                modifiedCsvText = await reader.ReadToEndAsync();
+            }
+            outputMemoryStream.Position = 0;
+            using var content2 = new MultipartFormDataContent();
+            var modifiedcsvBytes = Encoding.UTF8.GetBytes(modifiedCsvText);
+            var modifiedmemoryStream = new MemoryStream(modifiedcsvBytes);
+            var fileContent2 = new StreamContent(modifiedmemoryStream);
+            fileContent2.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+
+            content2.Add(fileContent2, "file", "updated.csv");
+
+            using var response2 = await httpClient.PostAsync("http://host.docker.internal:6969/csvdetails", content2);
+
+
+            if (response2.IsSuccessStatusCode)
+            {
+                var temp = await response2.Content.ReadAsStringAsync();
                 CSVResponse resultDict = JsonSerializer.Deserialize<CSVResponse>(temp);
                 CSVFile cSVFile = new CSVFile()
                 {
@@ -90,9 +126,13 @@ namespace MiniMLBackend.Controllers
                     startDate=resultDict.StartDate,
                     endDate=resultDict.EndDate,
                     passRate=resultDict.PassRate,
-                    csvFile=csvText,
+                    csvFile=modifiedCsvText,
                     simulationInstance=s1
                 };
+                CSVFile thala=datacontext.cSVFiles.Where(c=>c.simId==simId).FirstOrDefault();
+                if (thala != null) { 
+                    datacontext.cSVFiles.Remove(thala);
+                }
                 datacontext.cSVFiles.Add(cSVFile);
                 datacontext.SaveChanges();
                 return Ok(resultDict);
@@ -101,6 +141,8 @@ namespace MiniMLBackend.Controllers
             {
                 return StatusCode((int)response.StatusCode, "FastAPI processing failed.");
             }
+                
+            
         }
 
         [HttpGet("csvfile/{simId}")]
@@ -116,29 +158,23 @@ namespace MiniMLBackend.Controllers
                 result.Add("error", "Unauthorized access attempt");
                 return Unauthorized(result);
             }
-            var csvString = datacontext.cSVFiles.Where(c=>c.simId==s1.simId).FirstOrDefault().csvFile;
-            var csvBytes = Encoding.UTF8.GetBytes(csvString);
-            var memoryStream = new MemoryStream(csvBytes); // Convert string to stream
+            CSVFile resultFinal = datacontext.cSVFiles.Where(c => c.simId == s1.simId).FirstOrDefault();
+            
+            
 
-            using var client = new HttpClient();
-            using var content = new MultipartFormDataContent();
-
-            var fileContent = new StreamContent(memoryStream);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-
-            // "file" is the key FastAPI will look for
-            content.Add(fileContent, "file", "data.csv");
-
-            var response = await client.PostAsync("http://host.docker.internal:6969/csvfiletest", content);
-            if (response.IsSuccessStatusCode)
+            if (resultFinal!=null)
             {
-                var temp = await response.Content.ReadAsStringAsync();
-                CSVResponse resultDict = JsonSerializer.Deserialize<CSVResponse>(temp);
-                return Ok(resultDict);
+                Dictionary<string, object> ans = new Dictionary<string, object>();
+                ans.Add("recordsCount", resultFinal.recordsCount);
+                ans.Add("columnCount", resultFinal.columnCount);
+                ans.Add("passRate", resultFinal.passRate);
+                ans.Add("startDate", resultFinal.startDate);
+                ans.Add("endDate", resultFinal.endDate);
+                return Ok(ans);
             }
             else
             {
-                return StatusCode((int)response.StatusCode, "FastAPI processing failed.");
+                return NotFound("No csv file for simulation");
             }
 
         }

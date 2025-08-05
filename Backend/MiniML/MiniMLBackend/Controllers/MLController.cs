@@ -68,7 +68,7 @@ namespace MiniMLBackend.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var temp = await response.Content.ReadAsStringAsync();
-                Dictionary<int,RangeResponse> resultDict = JsonSerializer.Deserialize<Dictionary<int, RangeResponse>>(temp);
+                RangeResponse resultDict = JsonSerializer.Deserialize<RangeResponse>(temp);
                 return Ok(resultDict);
 
             }
@@ -321,7 +321,12 @@ namespace MiniMLBackend.Controllers
                 await WriteSSEAsync(new { error = "Unauthorized" });
                 return;
             }
-
+            string mlModel=datacontext.MLModels.Where(m=>m.simId==simId).FirstOrDefault().model;
+            if (mlModel==null)
+            {
+                await WriteSSEAsync(new { error = "Unauthorized" });
+                return;
+            }
             using var client = new HttpClient();
             using var memoryStream = new MemoryStream();
             await upload.file.CopyToAsync(memoryStream);
@@ -331,6 +336,7 @@ namespace MiniMLBackend.Controllers
             var fileContent = new StreamContent(memoryStream);
             fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
             content.Add(fileContent, "file", upload.file.FileName);
+            content.Add(new StringContent(mlModel), "model");
 
             var request = new HttpRequestMessage(HttpMethod.Post, "http://host.docker.internal:6969/predictstream")
             {
