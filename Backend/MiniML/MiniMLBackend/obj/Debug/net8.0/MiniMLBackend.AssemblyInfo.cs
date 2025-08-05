@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniMLBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+80c5cbee7e8d2ce9ffb095163068d0f04f73662d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a497be287401c60888b01608110f1c7268eafcc")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniMLBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniMLBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

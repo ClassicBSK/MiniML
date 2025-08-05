@@ -8,12 +8,14 @@ import xgboost as xgb
 import pickle
 import base64
 import time
-
+import csv
+import json
+import asyncio
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://localhost:32769"],  
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -96,7 +98,16 @@ async def get_response(file: UploadFile = File(...),trainStart: str = Form(...),
     model_bytes = pickle.dumps(model)
     model_base64 = base64.b64encode(model_bytes).decode("utf-8")
     # print(model_base64)
-    return {"model":model_base64,"tp":10,"tn":5,"fp":5,"fn":6}
+    return {"model":model_base64,"tp":10,"tn":5,"fp":5,"fn":6,
+                "train": {
+                    "loss": [0.69, 0.66, 0.62],
+                    "accuracy": [0.50, 0.45, 0.42]
+                },
+                "test": {
+                    "loss": [0.68, 0.65, 0.60],
+                    "accuracy": [0.48, 0.44, 0.40]
+                }
+            }
    
 # @app.post("/predict-stream")
 # async def predict_stream(file: UploadFile = File(...)):
@@ -140,7 +151,42 @@ async def get_response(train_file: UploadFile = File(...),valid_file: UploadFile
         raise HTTPException(status_code=400,detail="CSV columns do not match")
 
 
+@app.post("/resultvalidation")
+async def get_response(file: UploadFile = File(...),
+    validStart: str = Form(...),
+    validEnd: str = Form(...),
+    model: str =Form(...)
+):
+    model_bytes = base64.b64decode(model)
+    model = pickle.loads(model_bytes)
+    df_iterator = pd.read_csv(file.file, chunksize=10000)
+
+    total_rows = 0
+    total_cols = 0
+
+    for chunk in df_iterator:
+        total_rows += len(chunk)
+        total_cols = len(chunk.columns)
     
+    output_data={ 
+        "timestamp1":0,
+        "timestamp2":1
+    }
+    return output_data
+    
+@app.post("/predictstream")
+async def stream_predictions(file:UploadFile=File(...)):
+    contents = await file.read()
+    decoded = contents.decode('utf-8')
+    reader = csv.reader(io.StringIO(decoded))
+    async def generate():
+        for row in reader:
+            # Replace with your real model prediction logic
+            prediction = {"input": row, "output": 1}  # dummy prediction
+            yield f"{json.dumps(prediction)}\n"
+            await asyncio.sleep(0.05)
+    
+    return StreamingResponse(generate(), media_type="text/plain")
 
 
 if __name__ == "__main__":
