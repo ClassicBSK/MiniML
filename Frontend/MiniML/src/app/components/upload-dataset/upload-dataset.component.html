@@ -1,0 +1,58 @@
+<div class="d-flex flex-column min-vh-100">
+
+
+  <!-- Step Navigation -->
+  <nav class="nav-tabs">
+    <a class="tab active"><span class="circle step-number">1</span > <span class="step-label">Upload Dataset</span></a>
+    <a class="tab"><span class="circle step-number">2</span><span class="step-label"> Date Ranges</span></a>
+    <a class="tab"><span class="circle step-number">3</span><span class="step-label">Model Training</span> </a>
+    <a class="tab"><span class="circle step-number">4</span> <span class="step-label">Simulation</span></a>
+  </nav>
+
+<div class="custom-stepper-container">
+    <div class="step-progress-bar"></div>
+    <div class="stepper-header">
+    <span class="step-title">Upload Dataset</span>
+    <span class="step-count">Step 1 of 4</span>
+  </div>
+<div class="upload-section">
+  <div class="upload-card" [class.disabled]="uploading">
+    <label class="drop-area" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)">
+      <input type="file" accept=".csv" (change)="onFileSelect($event)" hidden #fileInput />
+      <div class="icon-placeholder"></div>
+      <p>Click to select a CSV file or drag and drop</p>
+      <button type="button" (click)="fileInput.click()" >Choose File</button>
+    </label>
+  </div>
+
+  <!-- Summary Cards Row -->
+  <div class="summary-cards" *ngIf="metadata">
+    <div class="card">
+      <div class="label">CSV File</div>
+      <div class="value file-link">
+        <a [href]="fileLink" target="_blank">train.csv</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Records</div>
+      <div class="value">{{ metadata.recordsCount }}</div>
+    </div>
+    <div class="card">
+      <div class="label">Columns</div>
+      <div class="value">{{ metadata.columnCount }}</div>
+    </div>
+    <div class="card">
+      <div class="label">Pass Rate</div>
+      <div class="value">{{ metadata.passRate }}%</div>
+    </div>
+    <div class="card">
+      <div class="label">Date Range</div>
+      <div class="value">{{ metadata.startDate }} to {{ metadata.endDate }}</div>
+    </div>
+  </div>
+
+  <div class="next-button-wrapper">
+    <button class="next-button" [disabled]="!metadata" (click)="goToNext()">Next</button>
+  </div>
+</div>
+

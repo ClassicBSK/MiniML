@@ -19,6 +19,7 @@ builder.Services.AddScoped<SimulationInstanceService>();
 builder.Services.AddScoped<CSVService>();
 builder.Services.AddDbContext<EF_DataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("EF_Postgres_DB")));
+builder.WebHost.UseUrls("http://*:5000");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(
     options =>
@@ -36,8 +37,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddMvc();
+//builder.Services.AddMvc();
 builder.Services.AddMemoryCache();
+builder.Services.AddSession(); // Add session services
+builder.Services.AddDistributedMemoryCache(); // Required for session
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // your Angular app's URL
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 2_147_483_647;
@@ -47,11 +59,17 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestBodySize = 2_147_483_647; 
 });
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var db = scope.ServiceProvider.GetRequiredService<EF_DataContext>();
+    db.Database.Migrate();  // Applies any pending migrations
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors("AllowFrontend");
+
+app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

@@ -80,7 +80,7 @@ async def get_response(file: UploadFile = File(...)):
          # set once
     passrate=count*100/total_rows
     
-    return {"recordsCount": total_rows, "columnCount": total_cols,"pass_rate":passrate,"startDate":pd.Timestamp(first).isoformat(timespec="seconds"),"endDate":pd.Timestamp(last).isoformat(timespec="seconds")}
+    return {"recordsCount": total_rows, "columnCount": total_cols,"passRate":passrate,"startDate":pd.Timestamp(first).isoformat(timespec="seconds"),"endDate":pd.Timestamp(last).isoformat(timespec="seconds")}
    
 
 
@@ -102,14 +102,14 @@ async def get_response(file: UploadFile = File(...),trainStart: str = Form(...),
     testEnd=pd.Timestamp(testEnd)
     validStart=pd.Timestamp(validStart)
     validEnd=pd.Timestamp(validEnd)
-    
+    logging.info(trainStart)
 
     train_all=[]
     test_all=[]
     valid_all=[]
     for chunk in df_iterator:
         # logging.info(list(chunk.columns))
-        chunk["Timestamps"] = pd.to_datetime(chunk["Timestamps"])
+        chunk["Timestamps"] = pd.to_datetime(chunk["Timestamps"]).dt.tz_localize("Asia/Kolkata")
         train_all.append( chunk[(chunk["Timestamps"] >= trainStart) & (chunk["Timestamps"] <= trainEnd)])
         test_all.append(chunk[(chunk["Timestamps"] >= testStart) & (chunk["Timestamps"] <= testEnd)])
         valid_all.append(chunk[(chunk["Timestamps"] >= validStart) & (chunk["Timestamps"] <= validEnd)])
@@ -157,47 +157,60 @@ async def get_response(file: UploadFile = File(...),trainStart: str = Form(...),
     validStart=pd.Timestamp(validStart)
     validEnd=pd.Timestamp(validEnd)
     model = None
-    params = {
-        'objective': 'binary:logistic',
-        'eval_metric': ['logloss', 'error'],
-        'tree_method': 'hist',
-    }
-
+    
+    logging.info(validStart)
     df_iterator = pd.read_csv(file.file, chunksize=10000)
     train_all=[]
     test_all=[]
     valid_all=[]
     for chunk in df_iterator:
         # logging.info(list(chunk.columns))
-        chunk["Timestamps"] = pd.to_datetime(chunk["Timestamps"])
+        chunk["Timestamps"] = pd.to_datetime(chunk["Timestamps"]).dt.tz_localize("Asia/Kolkata")
         train_all.append( chunk[(chunk["Timestamps"] >= trainStart) & (chunk["Timestamps"] <= trainEnd)])
         test_all.append(chunk[(chunk["Timestamps"] >= testStart) & (chunk["Timestamps"] <= testEnd)])
+        valid_all.append(chunk[(chunk["Timestamps"] >= validStart) & (chunk["Timestamps"] <= validEnd)])
     df_train=pd.concat(train_all,ignore_index=True)
+    
     df_test=pd.concat(test_all,ignore_index=True)
+    df_valid=pd.concat(valid_all,ignore_index=True)
+    
     # logging.info(f"train columns: {df_train.head()}")
     y_train = df_train['Response']
     X_train = df_train.drop(columns=["Response", "Timestamps"])
+    X_train = X_train.fillna(0)
     
     
+    logging.info(f"{(len(df_valid))}constant features")
     logging.info(f"Train: {y_train.nunique()}")
     dtrain = xgb.DMatrix(X_train, label=y_train)
     X_test = df_test.drop(columns=["Response", "Timestamps"])
+    X_test = X_test.fillna(0)
     y_test = df_test["Response"]
     logging.info(f"Test: {y_test.nunique()}")
     dtest = xgb.DMatrix(X_test,label=y_test)
     evals_result={}
-    model = xgb.train(params, dtrain, num_boost_round=10,evals=[(dtrain, 'train'), (dtest, 'test')],
+
+    pos_weight = (y_train == 0).sum() / (y_train == 1).sum()
+    params = {
+        'objective': 'binary:logistic',
+        'eval_metric': ['logloss', 'error'],
+        'tree_method': 'hist',
+        'scale_pos_weight':pos_weight,
+        'verbosity':2
+    }
+    
+    model = xgb.train(params, dtrain, num_boost_round=100,evals=[(dtrain, 'train'), (dtest, 'test')],
     evals_result=evals_result,verbose_eval=False)
     
     
 
     y_pred_prob = model.predict(dtest)
-    y_pred = (y_pred_prob > 0.5).astype(int)
+    y_pred = (y_pred_prob > 0.2).astype(int)
 
     test_accuracy = accuracy_score(y_test, y_pred)
     test_loss = log_loss(y_test, y_pred_prob)
     tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-
+    logging.info(f"{y_pred_prob.min()}, {y_pred_prob.max()}")
     train_error = evals_result['train']['error']
     test_error = evals_result['test']['error']
 
@@ -265,34 +278,47 @@ async def get_response(file: UploadFile = File(...),
     validEnd: str = Form(...),
     model: str =Form(...)
 ):
-    
     model_bytes = base64.b64decode(model)
     model = pickle.loads(model_bytes)
+
     df_iterator = pd.read_csv(file.file, chunksize=10000)
-    validStart=pd.Timestamp(validStart)
-    validEnd=pd.Timestamp(validEnd)
+
+    validStart = pd.Timestamp(validStart).tz_localize("UTC")
+    validEnd = pd.Timestamp(validEnd).tz_localize("UTC")
+
+    logging.info(validStart)
     valid_all=[]
     for chunk in df_iterator:
-        # logging.info(list(chunk.columns))
-        chunk["Timestamps"] = pd.to_datetime(chunk["Timestamps"])
-        
+        chunk["Timestamps"] = pd.to_datetime(chunk["Timestamps"]).dt.tz_localize("Asia/Kolkata").dt.tz_convert("UTC")
         valid_all.append(chunk[(chunk["Timestamps"] >= validStart) & (chunk["Timestamps"] <= validEnd)])
     df_valid=pd.concat(valid_all,ignore_index=True)
+    df_valid.fillna(0)
     X_valid = df_valid.drop(columns=["Response", "Timestamps"])
-    logging.info(f"valid columns:{list(X_valid.columns)}")
+    # logging.info(f"valid columns:{list(X_valid.columns)}")
     y_valid = df_valid["Response"]
     timestamps_valid = df_valid["Timestamps"]
-
+    logging.info(X_valid.shape[0])
     dvalid = xgb.DMatrix(X_valid)   
     y_pred_valid = model.predict(dvalid)
-    output_data = {
-        str(timestamps_valid.iloc[i]): int((y_pred_valid[i] > 0.5))
+
+    output_data = [
+        {"timestamp":str(timestamps_valid.iloc[i]),
+          "confidence": float(y_pred_valid[i]) if y_pred_valid[i] >= 0.5 else 1 - float(y_pred_valid[i]),
+          "prediction":int((y_pred_valid[i] > 0.5))
+          }
         for i in range(len(y_pred_valid))
-    }
+    ]
     # logging.info(output_data)
     
     return output_data
     
+def drop_unsupported_rows(df):
+    def is_supported(val):
+        return isinstance(val, (int, float, bool, np.number)) or pd.isna(val)
+
+    # Keep rows where all values are supported
+    mask = df.applymap(is_supported).all(axis=1)
+    return df[mask].copy()
 @app.post("/predictstream")
 async def stream_predictions(file:UploadFile=File(...),model: str =Form(...)):
     contents = await file.read()
@@ -306,21 +332,29 @@ async def stream_predictions(file:UploadFile=File(...),model: str =Form(...)):
     async def generate():
         for row in reader:
             df_row = pd.DataFrame([row], columns=header)
+            df_row.fillna(0)
+            row_dict = dict(zip(header, row))
             if 'Response' in df_row.columns:
                  df_row = df_row.drop(columns=['Response'])
             for col in df_row.columns:
                 df_row[col] = pd.to_numeric(df_row[col], errors='ignore')  # Ignore timestamp or categorical fields
-                
+            
             if 'Timestamps' in df_row.columns:
                  df_row = df_row.drop(columns=['Timestamps'])
+            # df_row=drop_unsupported_rows(df=df_row)
             dmatrix = xgb.DMatrix(df_row)
             y_pred = model.predict(dmatrix)[0]  # Single prediction
             class_pred = int(y_pred > 0.5)
+            y_ans=float(y_pred)
+            if(y_ans<50):
+                y_ans=1-y_ans
+            
             prediction = {
-                "input": row,
-                "probability": float(y_pred),
+                "timestamp": row_dict.get("Timestamps",None),
+                "confidence": y_ans,
                 "prediction": class_pred
             }
+            # logging.info(print(df_row.to_dict()))
             # Replace with your real model prediction logic
              # dummy prediction
             yield f"{json.dumps(prediction)}\n"

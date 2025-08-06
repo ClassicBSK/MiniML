@@ -64,7 +64,7 @@ namespace MiniMLBackend.Controllers
             content.Add(new StringContent(rangeData.validStart.ToString("o")), "validStart"); 
             content.Add(new StringContent(rangeData.validEnd.ToString("o")), "validEnd");
 
-            var response = await httpClient.PostAsync("http://host.docker.internal:6969/rangedata", content);
+            var response = await httpClient.PostAsync($"{configuration["Origins:ml"]}/rangedata", content);
             if (response.IsSuccessStatusCode)
             {
                 var temp = await response.Content.ReadAsStringAsync();
@@ -111,7 +111,7 @@ namespace MiniMLBackend.Controllers
             content.Add(new StringContent(rangeData.validStart.ToString("o")), "validStart");
             content.Add(new StringContent(rangeData.validEnd.ToString("o")), "validEnd");
 
-            var response = await httpClient.PostAsync("http://host.docker.internal:6969/trainmodel", content);
+            var response = await httpClient.PostAsync($"{configuration["Origins:ml"]}/trainmodel", content);
             if (response.IsSuccessStatusCode)
             {
                 var temp = await response.Content.ReadAsStringAsync();
@@ -200,7 +200,7 @@ namespace MiniMLBackend.Controllers
 
 
 
-            var response = await httpClient.PostAsync("http://host.docker.internal:6969/validatecsv", content);
+            var response = await httpClient.PostAsync($"{configuration["Origins:ml"]}/validatecsv", content);
             if (response.IsSuccessStatusCode)
             {
                 var temp = await response.Content.ReadAsStringAsync();
@@ -240,23 +240,28 @@ namespace MiniMLBackend.Controllers
 
         [HttpPost("validationresult/{simId}")]
         [Authorize]
-        public async Task<IActionResult> GetValidationResult(int simId)
+        public async Task GetValidationResult(int simId)
         {
+            Response.ContentType = "text/event-stream";
+            Response.Headers["Cache-Control"] = "no-cache";
+            Response.Headers["X-Accel-Buffering"] = "no";
+            Response.Headers["Connection"] = "keep-alive";
+            HttpContext.Features.Get<IHttpResponseBodyFeature>()?.DisableBuffering();
             Dictionary<string, object> result = new Dictionary<string, object>();
             UserLogin user = GetCurrentUser();
             SimulationInstance s1 = datacontext.Simulations.Include(s => s.user).Where(s => s.simId == simId).FirstOrDefault();
             //Console.WriteLine(user.username);
             if (s1 == null || s1.user.username != user.username)
             {
-                result.Add("error", "Unauthorized access attempt");
-                return Unauthorized(result);
+                await WriteSSEAsync(new { error = "Invalid file" });
+                return;
             }
 
             MLModel m1 = datacontext.MLModels.Where(m => m.simId == simId).FirstOrDefault();
             if (m1 == null)
             {
-                result.Add("error", "ML Model not found");
-                return NotFound(result);
+                await WriteSSEAsync(new { error = "Model not found" });
+                return;
             }
 
 
@@ -277,20 +282,59 @@ namespace MiniMLBackend.Controllers
             content.Add(fileContent, "file", "data.csv");
             
             content.Add(new StringContent(m1.model), "model");
+            
             content.Add(new StringContent(m1.validStart.ToString("o")), "validStart");
             content.Add(new StringContent(m1.validEnd.ToString("o")), "validEnd");
-
-            var response = await httpClient.PostAsync("http://host.docker.internal:6969/resultvalidation", content);
-            if (response.IsSuccessStatusCode)
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{configuration["Origins:ml"]}/resultvalidation")
             {
-                var temp = await response.Content.ReadAsStringAsync();
-                Dictionary<string, int> resultDict = JsonSerializer.Deserialize<Dictionary<string,int>>(temp);
-                return Ok(resultDict);
+                Content = content
+            };
 
+            using var response = await client.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                HttpContext.RequestAborted);
+            if (!response.IsSuccessStatusCode)
+            {
+                await WriteSSEAsync(new { error = "FastAPI error", status = response.StatusCode });
+                return;
             }
-            else
+            var stream = await response.Content.ReadAsStreamAsync();
+            using var reader = new StreamReader(stream);
+            var body = await reader.ReadToEndAsync();
+
+
+
+            var items = JsonSerializer.Deserialize<List<Dictionary<string,object>>>(body);
+
+            if (items != null)
             {
-                return StatusCode((int)response.StatusCode, response.ToString());
+                foreach (var item in items)
+                {
+                    var json = JsonSerializer.Serialize(item);
+                    var sse = $"data: {json}\n\n";
+
+                    await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(sse));
+                    await Response.Body.FlushAsync();
+
+                    await Task.Delay(500); // simulate delay per message
+                }
+            }
+
+            // Helper methods
+            async Task WriteSSEAsync(object obj)
+            {
+                var json = JsonSerializer.Serialize(obj);
+                var sse = $"data: {json}\n\n";
+                await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(sse));
+                await Response.Body.FlushAsync();
+            }
+
+            async Task WriteRawSSEAsync(string line)
+            {
+                var sse = $"data: {line}\n\n";
+                await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(sse));
+                await Response.Body.FlushAsync();
             }
         }
 
@@ -324,7 +368,7 @@ namespace MiniMLBackend.Controllers
             string mlModel=datacontext.MLModels.Where(m=>m.simId==simId).FirstOrDefault().model;
             if (mlModel==null)
             {
-                await WriteSSEAsync(new { error = "Unauthorized" });
+                await WriteSSEAsync(new { error = "Model not found" });
                 return;
             }
             using var client = new HttpClient();
@@ -338,7 +382,7 @@ namespace MiniMLBackend.Controllers
             content.Add(fileContent, "file", upload.file.FileName);
             content.Add(new StringContent(mlModel), "model");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://host.docker.internal:6969/predictstream")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{configuration["Origins:ml"]}/predictstream")
             {
                 Content = content
             };

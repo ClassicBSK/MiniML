@@ -1,0 +1,25 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h2>MiniML</h2>
+    <div class="profile-container" (click)="toggleDropdown()">
+        <div class="profile-icon">U</div>
+        <div class="dropdown-menu" *ngIf="dropdownOpen">
+            <p>{{ username }}</p>
+            <button (click)="logout()">Logout</button>
+    </div>
+</div>
+
+  </header>
+
+  <div class="simulations-section">
+    <h3>Simulations</h3>
+    <button (click)="createSimulation()">+</button>
+
+    <div *ngFor="let sim of simulations" class="simulation-card">
+      <div>
+        <strong>{{ sim.simName }}</strong> ({{ sim.simId }})
+      </div>
+      <button (click)="goToSimulation(sim.simId)">Go to</button>
+    </div>
+  </div>
+</div>

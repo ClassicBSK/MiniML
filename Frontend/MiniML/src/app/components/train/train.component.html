@@ -1,0 +1,95 @@
+<div class="d-flex flex-column min-vh-100">
+
+
+  <!-- Step Navigation -->
+  <nav class="nav-tabs">
+    <a class="tab active"><span class="circle step-number">1</span> <span class="step-label">Upload Dataset</span></a>
+    <a class="tab active"><span class="circle step-number">2</span><span class="step-label"> Date Ranges</span></a>
+    <a class="tab active-step"><span class="circle step-number">3</span><span class="step-label">Model Training</span></a>
+    <a class="tab"><span class="circle step-number">4</span> <span class="step-label">Simulation</span></a>
+  </nav>
+
+  <div class="custom-stepper-container">
+    <div class="step-progress-bar"></div>
+    <div class="stepper-header">
+      <span class="step-title">Model Training & Evaluation</span>
+      <span class="step-count">Step 3 of 4</span>
+    </div>
+  </div>
+<div class="train-section">
+  <button
+    *ngIf="!modelTrained"
+    class="train-button"
+    (click)="trainModel()"
+    [disabled]="trainingInProgress"
+  >
+    Train Model
+  </button>
+
+  <button *ngIf="modelTrained"
+    class="train-button"
+    (click)="trainModel()"
+    [disabled]="trainingInProgress"
+    >
+    Train Model again
+  </button>
+
+  <div *ngIf="trainingInProgress" class="status-msg loading">⏳ Training in progress...</div>
+</div>
+
+<div *ngIf="modelTrained" class="metrics-and-charts-wrapper">
+
+  <!-- Metrics Card -->
+  <div class="metrics-card">
+    <h3 class="section-heading">Model Performance Metrics</h3>
+
+    <div class="metrics-grid">
+      <div class="metric-card accuracy">
+        <p class="value">{{ metrics.accuracy }}%</p>
+        <p class="label">Accuracy</p>
+      </div>
+      <div class="metric-card precision">
+        <p class="value">{{ metrics.precision }}%</p>
+        <p class="label">Precision</p>
+      </div>
+      <div class="metric-card recall">
+        <p class="value">{{ metrics.recall }}%</p>
+        <p class="label">Recall</p>
+      </div>
+      <div class="metric-card f1">
+        <p class="value">{{ metrics.f1 }}%</p>
+        <p class="label">F1 Score</p>
+      </div>
+    </div>
+
+    <p class="footer-note">Model trained on 6 months of data • Validated on 2 months • Ready for 2-month simulation</p>
+</div>
+
+<div class="charts-container" *ngIf="modelTrained">
+  <h2>Model Performance</h2>
+  <div class="chart-box">
+    <h3>Training Metrics</h3>
+    <canvas baseChart
+      [datasets]="trainingChartData.datasets"
+      [labels]="trainingChartData.labels"
+      [options]="trainingChartOptions"
+      type="line">
+    </canvas>
+  </div>
+
+  <div class="chart-box">
+    <h3>Model Performance</h3>
+    <canvas baseChart
+      [datasets]="confusionMatrixData.datasets"
+      [labels]="confusionMatrixData.labels"
+      [options]="confusionMatrixOptions"
+      type="doughnut">
+    </canvas>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <button class="next-button" (click)="goToNext()" [disabled]="!modelTrained">
+    Next
+  </button>
+</div>

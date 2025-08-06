@@ -1,0 +1,52 @@
+services:
+
+  frontend:
+    build:
+      context: ./Frontend/MiniML
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./Backend/MiniML/MiniMLBackend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ConnectionStrings__EF_Postgres_DB=Host=db;Port=5432;Database=yourdb;Username=postgres;Password=postgres
+    depends_on:
+      - db
+
+  mlapi:
+    build:
+      context: ./ML
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: yourdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  # Optional migration service
+  migration:
+    build:
+      context: ./Backend/MiniML/MiniMLBackend
+    command: ["dotnet", "ef", "database", "update"]
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__EF_Postgres_DB=Host=db;Port=5432;Database=yourdb;Username=postgres;Password=postgres
+
+volumes:
+  dbdata:

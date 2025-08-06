@@ -1,0 +1,218 @@
+/* Nav Tabs */
+.nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 15px 30px;
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 30px;
+    background-color: #e0e0e0;
+    color: #555;
+    font-weight: 600;
+    text-decoration: none;
+    flex: 1 1 140px;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+
+    .circle {
+      background-color: #ccc;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    &.active {
+      background-color: #d4edda;
+      color: #2e7d32;
+      border: 1px solid #2e7d32;
+
+      .circle {
+        background-color: #2e7d32;
+      }
+    }
+  }
+}
+
+.custom-stepper-container {
+  background-color: #f9fbfc;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.5rem;
+  position: relative;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.stepper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.step-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  font-family: "Arial";
+}
+
+.step-count {
+  display: inline-block;
+  background-color: #5c6bc0;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 14px;
+  margin: 8px 0;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-card {
+  border: 2px dashed #bbb;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  background-color: #fafafa;
+  transition: 0.3s;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .drop-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+
+    .icon-placeholder {
+      width: 48px;
+      height: 48px;
+      background: #ccc;
+      border-radius: 50%;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    button {
+      padding: 0.5rem 1.2rem;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background-color: #115293;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.summary-cards {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  min-width: 150px;
+  background: #f0fdf4; /* light green background */
+  border: 1px solid #d1fae5;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.file-link a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.next-button-wrapper {
+  position: fixed;       /* ✅ stick to viewport */
+  bottom: 30px;          /* space from bottom */
+  right: 50px;           /* space from right */
+  z-index: 1000;         /* make sure it's on top of charts etc. */
+  text-align: right;
+
+  .next-button {
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    background-color: #1976d2;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background-color: #388e3c;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+

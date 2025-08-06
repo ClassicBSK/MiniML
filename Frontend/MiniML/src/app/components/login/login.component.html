@@ -1,0 +1,38 @@
+<!-- Full-height page wrapper -->
+<div class="d-flex flex-column min-vh-100">
+
+  <!-- Header
+  <div class="px-4 py-3 d-flex justify-content-between align-items-center "
+       style="background: linear-gradient(to right, #d53369, #cbad6d); color: white;">
+    <h2 class="m-0">MiniML - Predictive Quality Control</h2>
+    <img src="assets/images/a.jpg" alt="ABB Logo" class="img-fluid" style="max-width: 50px;" />
+  </div> -->
+
+  <!-- Main login content -->
+  <div class="flex-grow-1 d-flex justify-content-center align-items-center bg-light">
+    <div class="card shadow-lg p-4 rounded-4 text-center glass-card w-100" style="max-width: 400px;">
+      <h2 class="mb-3">Login</h2>
+
+      <form (ngSubmit)="onLoginSubmit()" #loginForm="ngForm">
+        <div class="mb-3">
+          <input type="text" class="form-control" placeholder="Username"
+                 name="username" [(ngModel)]="username" required />
+        </div>
+
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Password"
+                 name="password" [(ngModel)]="password" required />
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100">Login</button>
+      </form>
+
+      <div *ngIf="errorMessage" class="text-danger mt-3">{{ errorMessage }}</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-muted py-3">
+    © IntelliInspect
+  </footer>
+</div>

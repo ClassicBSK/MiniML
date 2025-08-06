@@ -1,6 +1,6 @@
 
 
-curl -X POST https://localhost:32769/api/ML/predictstream/2 -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IkFudXJhZGhhIiwiZXhwIjoxNzU0Mzk5NzI0LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0MzQyIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0NDM0MiJ9.1b20M6O5bWRHkiIMZhpW2d5BgRm50YCnGW3WmzaWUBA" -F "file=@C:\Users\anuba\output.csv" -H "Accept: text/event-stream"
+curl -X POST https://localhost:32769/api/ML/predictstream/1 -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IlNoaXZha3VtYXIiLCJleHAiOjE3NTQ0ODQyMTgsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDQzNDIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQ0MzQyIn0.C7sJnrEMuOw9K4ZedACWVBrYoUhen1MHaqH-AMZ2q3U" -F "file=@C:\Users\anuba\output.csv" -H "Accept: text/event-stream"
 
 curl -N -X POST http://localhost:6969/predictstream ^
   -F "file=@D:\Studies\ABB\Projects\ML\bosch-production-line-performance\sample_submission.csv"
@@ -9,3 +9,5 @@ curl -N -X POST http://localhost:6969/csvfilepush ^
   -F "file=@D:\Studies\ABB\Projects\ML\bosch-production-line-performance\sample_submission.csv"
 
 curl -X POST -F "file=@D:\Studies\ABB\Projects\ML\trimmed.csv" http://localhost:6969/csvfilepush -o output.csv
+
+curl -X POST https://localhost:32769/api/ML/validationresult/1 -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IlNoaXZha3VtYXIiLCJleHAiOjE3NTQ0ODg4MDMsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDQzNDIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQ0MzQyIn0.RdjVbsFTf0PHXYDwIgJwhBhJrzdBd3wAKsh7dX3jN_g"  -H "Accept: text/event-stream"

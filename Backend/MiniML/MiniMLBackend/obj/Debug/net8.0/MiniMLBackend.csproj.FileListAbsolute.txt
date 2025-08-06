@@ -1,5 +1,4 @@
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\appsettings.Development.json
-D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\appsettings.json
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\MiniMLBackend.staticwebassets.endpoints.json
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\MiniMLBackend.exe
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\MiniMLBackend.deps.json
@@ -150,3 +149,9 @@ D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\obj\Debug\net8.0\ref\MiniML
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\Npgsql.dll
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\obj\Debug\net8.0\MiniMLBackend.sourcelink.json
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\appsettings.json
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
+D:\Studies\ABB\Projects\Backend\MiniML\MiniMLBackend\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll

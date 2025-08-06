@@ -1,0 +1,118 @@
+<div class="d-flex flex-column min-vh-100">
+  <!-- Header -->
+  <!-- <div class="header-bar">
+    <h2>MiniML - Predictive Quality Control</h2>
+    <img src="C:/Users/C KIRANMAYI/Downloads/hackathon/hack/src/assests/ABB_logo.png" alt="ABB Logo" class="logo" />
+  </div> -->
+
+  <!-- Step Navigation -->
+  <nav class="nav-tabs">
+    <a class="tab active"><span class="circle step-number">1</span > <span class="step-label">Upload Dataset</span></a>
+    <a class="tab active"><span class="circle step-number">2</span><span class="step-label"> Date Ranges</span></a>
+    <a class="tab active"><span class="circle step-number">3</span><span class="step-label">Model Training</span> </a>
+    <a class="tab active-step"><span class="circle step-number">4</span> <span class="step-label">Simulation</span></a>
+  </nav>
+  <div class="custom-stepper-container">
+    <div class="step-progress-bar"></div>
+    <div class="stepper-header">
+      <span class="step-title">Real-Time Prediction Simulation</span>
+      <span class="step-count">Step 4 of 4</span>
+    </div>
+  </div>
+<div class="simulation-header container mb-4">
+  <div class="row align-items-center position-relative">
+    <div class="col-12 col-md-2 text-md-start text-center mb-2 mb-md-0">
+      <button (click)="goHome()" class="btn btn-outline-secondary home-btn">Home</button>
+    </div>
+
+  <button class="btn btn-primary px-4 py-2"
+          (click)="startSimulation()" 
+          [disabled]="simulationRunning">
+    {{ simulationCompleted ? 'Restart Simulation' : 'Start Simulation' }}
+  </button>
+  <input type="file" accept=".csv" (change)="onFileSelect($event)" hidden #fileInput />
+  <button class="btn btn-primary px-4 py-2" type="button" (click)="fileInput.click()" >Choose File</button>
+
+  <div *ngIf="simulationCompleted" class="status-msg">
+    ✔ Simulation completed
+  </div>
+</div>
+</div>
+
+
+  <div class="charts row justify-content-center gx-4 gy-4 mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="mb-3 text-center">Real-Time Quality Predictions</h6>
+        <canvas baseChart 
+          #lineChart
+          [data]="lineChartData" 
+          [options]="lineChartOptions" 
+          [type]="'line'">
+        </canvas>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="mb-3 text-center">Prediction Confidence</h6>
+        <canvas baseChart 
+          #donutChart
+          [data]="donutChartData" 
+          [type]="'doughnut'">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+<div class="live-stats-box p-3 mb-4">
+  <h6 class="fw-semibold mb-3">Live Statistics</h6>
+  <div class="row g-3 text-center text-md-start">
+    <div class="col-6 col-md-3">
+      <div class="stat-card border rounded py-3 px-2 h-100">
+        <div class="stat-value text-dark fw-bold fs-5">{{ stats.total }}</div>
+        <div class="stat-label text-uppercase text-muted small">Total</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card border rounded py-3 px-2 h-100">
+        <div class="stat-value text-success fw-bold fs-5">{{ stats.pass }}</div>
+        <div class="stat-label text-uppercase text-muted small">Pass</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card border rounded py-3 px-2 h-100">
+        <div class="stat-value text-danger fw-bold fs-5">{{ stats.fail }}</div>
+        <div class="stat-label text-uppercase text-muted small">Fail</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card border rounded py-3 px-2 h-100">
+        <div class="stat-value text-primary fw-bold fs-5">{{ stats.avgConfidence }}%</div>
+        <div class="stat-label text-uppercase text-muted small">Avg Conf.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="live-table-box">
+  <h6 class="fw-semibold mb-3">Live Prediction Stream</h6>
+  <div class="table-responsive shadow-sm border rounded">
+    <table class="table table-borderless mb-0 live-stream-table">
+      <thead class="table-light text-center small text-muted">
+        <tr>
+          <th>TIME</th>
+          <th>PREDICTION</th>
+          <th>CONFIDENCE</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr *ngFor="let row of simulationData">
+          <td>{{ row.timestamp }}</td>
+          <td>{{ row.prediction }}</td>
+          <td>{{ row.confidence }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

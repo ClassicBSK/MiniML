@@ -1,3 +1,6 @@
 bosch-production-line-performance/
 myenv/
 trimmed.csv
+balanced_trimmed.csv
+health.csv
+fileedit.py

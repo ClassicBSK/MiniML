@@ -10,7 +10,7 @@ namespace MiniMLBackend.Model
         [JsonPropertyName("columnCount")]
         public int ColumnCount { get; set; }
 
-        [JsonPropertyName("pass_rate")]
+        [JsonPropertyName("passRate")]
         public float PassRate { get; set; }
 
         [JsonPropertyName("startDate")]

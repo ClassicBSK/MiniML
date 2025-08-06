@@ -78,8 +78,8 @@ namespace MiniMLBackend.Controllers
 
             content.Add(fileContent, "file", file.FileName);
 
-            //var response = await httpClient.PostAsync("http://host.docker.internal:6969/csvfiletest", content, HttpCompletionOption.ResponseHeadersRead);
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://host.docker.internal:6969/csvfilepush")
+            //var response = await httpClient.PostAsync($"{configuration["Origins:ml"]}/csvfiletest", content, HttpCompletionOption.ResponseHeadersRead);
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{configuration["Origins:ml"]}/csvfilepush")
             {
                 Content = content
             };
@@ -111,7 +111,7 @@ namespace MiniMLBackend.Controllers
 
             content2.Add(fileContent2, "file", "updated.csv");
 
-            using var response2 = await httpClient.PostAsync("http://host.docker.internal:6969/csvdetails", content2);
+            using var response2 = await httpClient.PostAsync($"{configuration["Origins:ml"]}/csvdetails", content2);
 
 
             if (response2.IsSuccessStatusCode)

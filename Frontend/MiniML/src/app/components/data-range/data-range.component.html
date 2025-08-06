@@ -1,0 +1,81 @@
+<div class="d-flex flex-column min-vh-100">
+
+  <!-- Header -->
+  <!-- <div class="header-bar">
+    <h2>MiniML - Predictive Quality Control</h2>
+    <img src="C:/Users/C KIRANMAYI/Downloads/hackathon/hack/src/assests/ABB_logo.png" alt="ABB Logo" class="logo" />
+  </div> -->
+
+  <!-- Step Navigation -->
+  <nav class="nav-tabs">
+    <a class="tab active"><span class="circle step-number">1</span > <span class="step-label">Upload Dataset</span></a>
+    <a class="tab active"><span class="circle step-number">2</span><span class="step-label"> Date Ranges</span></a>
+    <a class="tab"><span class="circle step-number">3</span><span class="step-label">Model Training</span> </a>
+    <a class="tab"><span class="circle step-number">4</span> <span class="step-label">Simulation</span></a>
+  </nav>
+
+  <div class="custom-stepper-container">
+    <div class="step-progress-bar"></div>
+    <div class="stepper-header">
+      <span class="step-title">Data Range Selection</span>
+      <span class="step-count">Step 2 of 4</span>
+    </div>
+  </div>
+  <div class="date-range-container">
+  <div class="period-cards">
+  <div class="card">
+    <h3 class="card-title">Training Period</h3>
+    <label>Start Timestamp: <input type="datetime-local" [(ngModel)]="trainingStart" /></label>
+    <label>End Timestamp: <input type="datetime-local" [(ngModel)]="trainingEnd" /></label>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Testing Period</h3>
+    <label>Start Timestamp: <input type="datetime-local" [(ngModel)]="testingStart" /></label>
+    <label>End Timestamp: <input type="datetime-local" [(ngModel)]="testingEnd" /></label>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Simulation Period</h3>
+    <label>Start Timestamp: <input type="datetime-local" [(ngModel)]="simulationStart" /></label>
+    <label>End Timestamp: <input type="datetime-local" [(ngModel)]="simulationEnd" /></label>
+  </div>
+</div>
+
+<div class="validation-msg" [class.success]="validationSuccess" [class.error]="!validationSuccess">
+  {{ validationMessage }}
+</div>
+
+<div class="summary-cards" *ngIf="validationSuccess">
+  <div class="card training">
+    <h4>Training Period</h4>
+    <p>{{ summary.training }}</p>
+  </div>
+  <div class="card testing">
+    <h4>Testing Period</h4>
+    <p>{{ summary.testing }}</p>
+  </div>
+  <div class="card simulation">
+    <h4>Simulation Period</h4>
+    <p>{{ summary.simulation }}</p>
+  </div>
+</div>
+
+
+<!-- Stub for chart -->
+<div class="chart-section" *ngIf="barChartData.datasets[0].data.length">
+
+  <canvas
+    baseChart
+    [data]="barChartData"
+    [options]="barChartOptions"
+    [type]="'bar'">
+  </canvas>
+
+</div>
+
+<div class="actions">
+  <button (click)="onValidateRanges()">Validate Ranges</button>
+  <button [disabled]="!validationSuccess" (click)="goToNext()">Next</button>
+</div>
+</div>
