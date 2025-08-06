@@ -1,0 +1,243 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px;
+  background-color: #f9f9f9;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Top Header Gradient */
+.header-bar {
+  background: linear-gradient(90deg, #d8476e, #af558b, #7875c5);
+  color: white;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  flex-wrap: wrap;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+}
+
+/* Nav Tabs */
+.nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 15px 30px;
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 30px;
+    background-color: #e0e0e0;
+    color: #555;
+    font-weight: 600;
+    text-decoration: none;
+    flex: 1 1 140px;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+
+    .circle {
+      background-color: #ccc;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    &.active {
+      background-color: #d4edda;
+      color: #2e7d32;
+      border: 1px solid #2e7d32;
+
+      .circle {
+        background-color: #2e7d32;
+      }
+    }
+  }
+}
+
+/* Step Indicator */
+.step-indicator {
+  display: inline-block;
+  background-color: #5c6bc0;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 14px;
+  margin: 12px 20px;
+  align-self: flex-end;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-card {
+  border: 2px dashed #bbb;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  background-color: #fafafa;
+  transition: 0.3s;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .drop-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+
+    .icon-placeholder {
+      width: 48px;
+      height: 48px;
+      background: #ccc;
+      border-radius: 50%;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    button {
+      padding: 0.5rem 1.2rem;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background-color: #115293;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.summary-cards {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  min-width: 150px;
+  background: #f0fdf4; /* light green background */
+  border: 1px solid #d1fae5;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.value {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.file-link a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.next-button-wrapper {
+  text-align: right;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 1.5rem; 
+  padding-right: 0.5rem;
+
+  .next-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background-color: #388e3c;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -1,0 +1,79 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header-bar">
+    <h2>MiniML - Predictive Quality Control</h2>
+    <img src="C:/Users/C KIRANMAYI/Downloads/hackathon/hack/src/assests/ABB_logo.png" alt="ABB Logo" class="logo" />
+  </div>
+
+  <!-- Step Navigation -->
+  <nav class="nav-tabs">
+    <a class="tab active"><span class="circle step-number">1</span > <span class="step-label">Upload Dataset</span></a>
+    <a class="tab active"><span class="circle step-number">2</span><span class="step-label"> Date Ranges</span></a>
+    <a class="tab"><span class="circle step-number">3</span><span class="step-label">Model Training</span> </a>
+    <a class="tab"><span class="circle step-number">4</span> <span class="step-label">Simulation</span></a>
+  </nav>
+
+<div class="step-indicator">Step 2 of 4</div>
+
+<div class="date-range-container">
+  <h3 class="section-title">Date Range Selection</h3>
+
+  <div class="period-cards">
+  <div class="card">
+    <h3 class="card-title">Training Period</h3>
+    <label>Start Date: <input type="date" [(ngModel)]="trainingStart" /></label>
+    <label>End Date: <input type="date" [(ngModel)]="trainingEnd" /></label>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Testing Period</h3>
+    <label>Start Date: <input type="date" [(ngModel)]="testingStart" /></label>
+    <label>End Date: <input type="date" [(ngModel)]="testingEnd" /></label>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Simulation Period</h3>
+    <label>Start Date: <input type="date" [(ngModel)]="simulationStart" /></label>
+    <label>End Date: <input type="date" [(ngModel)]="simulationEnd" /></label>
+  </div>
+</div>
+
+<div class="validation-msg" [class.success]="validationSuccess" [class.error]="!validationSuccess">
+  {{ validationMessage }}
+</div>
+
+<div class="summary-cards" *ngIf="validationSuccess">
+  <div class="card training">
+    <h4>Training Period</h4>
+    <p>{{ summary.training }}</p>
+    <small>2021-01-01 to 2021-08-31</small>
+  </div>
+  <div class="card testing">
+    <h4>Testing Period</h4>
+    <p>{{ summary.testing }}</p>
+    <small>2021-09-01 to 2021-10-31</small>
+  </div>
+  <div class="card simulation">
+    <h4>Simulation Period</h4>
+    <p>{{ summary.simulation }}</p>
+    <small>2021-11-01 to 2021-12-31</small>
+  </div>
+</div>
+
+
+<!-- Stub for chart -->
+<div class="chart-section" *ngIf="barChartData.datasets[0].data.length">
+
+  <canvas
+    baseChart
+    [data]="barChartData"
+    [options]="barChartOptions"
+    [type]="'bar'">
+  </canvas>
+
+</div>
+
+<div class="actions">
+  <button (click)="onValidateRanges()">Validate Ranges</button>
+  <button [disabled]="!validationSuccess" (click)="goToNext()">Next</button>
+</div>

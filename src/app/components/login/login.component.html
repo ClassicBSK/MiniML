@@ -1,0 +1,18 @@
+<div class="login-wrapper">
+  <h1>IntelliInspect</h1>
+  <div class="login-box">
+    <img src="assets/images/a.jpg" alt="ABB Logo" class="logo" />
+    <h2>Login</h2>
+
+    <!-- Add (ngSubmit) to call your TS function -->
+    <form (ngSubmit)="onLoginSubmit()" #loginForm="ngForm">
+      <!-- Bind values to TS variables -->
+      <input type="text" placeholder="Username" name="username" [(ngModel)]="username" required />
+      <input type="password" placeholder="Password" name="password" [(ngModel)]="password" required />
+
+      <button type="submit" class="abb-btn">Login</button>
+    </form>
+
+    <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>

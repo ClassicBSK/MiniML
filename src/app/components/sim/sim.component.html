@@ -1,0 +1,81 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header-bar">
+    <h2>MiniML - Predictive Quality Control</h2>
+    <img src="C:/Users/C KIRANMAYI/Downloads/hackathon/hack/src/assests/ABB_logo.png" alt="ABB Logo" class="logo" />
+  </div>
+
+  <!-- Step Navigation -->
+  <nav class="nav-tabs">
+    <a class="tab active"><span class="circle step-number">1</span > <span class="step-label">Upload Dataset</span></a>
+    <a class="tab active"><span class="circle step-number">2</span><span class="step-label"> Date Ranges</span></a>
+    <a class="tab active"><span class="circle step-number">3</span><span class="step-label">Model Training</span> </a>
+    <a class="tab"><span class="circle step-number">4</span> <span class="step-label">Simulation</span></a>
+  </nav>
+
+<div class="step-indicator">Step 4 of 4</div>
+
+
+<div class="simulation-controls">
+  <button (click)="goHome()" class="home-btn">
+    Home
+  </button>
+
+  <button (click)="startSimulation()" 
+          [disabled]="simulationRunning">
+    {{ simulationCompleted ? 'Restart Simulation' : 'Start Simulation' }}
+  </button>
+
+  <div *ngIf="simulationCompleted" class="status-msg">
+    ✔ Simulation completed
+  </div>
+</div>
+
+
+<div class="charts">
+  <div class="line-chart">
+    <canvas baseChart 
+      [data]="lineChartData" 
+      [options]="lineChartOptions" 
+      [type]="'line'">
+    </canvas>
+  </div>
+  <div class="donut-chart">
+    <canvas baseChart 
+      [data]="donutChartData" 
+      [type]="'doughnut'">
+    </canvas>
+  </div>
+</div>
+
+<div class="stats-panel">
+  <div>Total Predictions: {{ stats.total }}</div>
+  <div>Pass Count: {{ stats.pass }}</div>
+  <div>Fail Count: {{ stats.fail }}</div>
+  <div>Avg Confidence: {{ stats.avgConfidence }}%</div>
+</div>
+
+<table class="live-table">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Sample ID</th>
+      <th>Prediction</th>
+      <th>Confidence (%)</th>
+      <th>Temperature (°C)</th>
+      <th>Pressure (hPa)</th>
+      <th>Humidity (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of simulationData">
+      <td>{{ row.timestamp }}</td>
+      <td>{{ row.sampleId }}</td>
+      <td>{{ row.prediction }}</td>
+      <td>{{ row.confidence }}</td>
+      <td>{{ row.temp }}</td>
+      <td>{{ row.pressure }}</td>
+      <td>{{ row.humidity }}</td>
+    </tr>
+  </tbody>
+</table>
