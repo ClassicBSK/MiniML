@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-def create_balanced_200mb_csv(input_file, output_file, max_bytes=200 * 1024 * 1024, chunk_size=100000):
+def create_balanced_200mb_csv(input_file, output_file, max_bytes=10 * 1024 * 1024, chunk_size=100000):
     total_bytes = 0
     header_written = False
 
@@ -40,5 +40,5 @@ def create_balanced_200mb_csv(input_file, output_file, max_bytes=200 * 1024 * 10
 # Usage
 create_balanced_200mb_csv(
     "D:\\Studies\\ABB\\Projects\\ML\\bosch-production-line-performance\\train_numeric.csv\\train_numeric.csv",
-    "balanced_trimmed.csv"
+    "balanced_trimmed_10mb.csv"
 )

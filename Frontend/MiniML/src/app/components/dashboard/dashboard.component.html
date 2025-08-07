@@ -17,7 +17,7 @@
 
     <div *ngFor="let sim of simulations" class="simulation-card">
       <div>
-        <strong>{{ sim.simName }}</strong> ({{ sim.simId }})
+        <strong>{{ sim.simName }}</strong>
       </div>
       <button (click)="goToSimulation(sim.simId)">Go to</button>
     </div>
