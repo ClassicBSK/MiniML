@@ -39,6 +39,7 @@
           },
           "configurations": {
             "production": {
+              
               "budgets": [
                 {
                   "type": "initial",
@@ -54,7 +55,9 @@
               "outputHashing": "all"
             },
             "development": {
-              "optimization": false,
+              "optimization": {"fonts": {
+                  "inline": false
+                }},
               "extractLicenses": false,
               "sourceMap": true
             }
@@ -85,6 +88,7 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
+            
             "assets": [
               {
                 "glob": "**/*",
