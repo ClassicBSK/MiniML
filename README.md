@@ -64,6 +64,8 @@ docker-compose up --build -d
 | ML Service  | http://localhost:8000        | FastAPI ML API                 |
 | Database    | localhost:5432               | PostgreSQL |
 
+Go to the url: http://localhost:4200/register to get started or http://localhost:4200/login If you already have an account created in this instance
+
 ---
 
 ## 🧪 Development Tips
