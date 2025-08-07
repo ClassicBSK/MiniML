@@ -87,7 +87,7 @@
     </div>
     <div class="col-6 col-md-3">
       <div class="stat-card border rounded py-3 px-2 h-100">
-        <div class="stat-value text-primary fw-bold fs-5">{{ stats.avgConfidence }}%</div>
+        <div class="stat-value text-primary fw-bold fs-5">{{ stats.avgConfidence*100 }}%</div>
         <div class="stat-label text-uppercase text-muted small">Avg Conf.</div>
       </div>
     </div>
@@ -109,7 +109,7 @@
         <tr *ngFor="let row of simulationData">
           <td>{{ row.timestamp }}</td>
           <td>{{ row.prediction }}</td>
-          <td>{{ row.confidence }}%</td>
+          <td>{{ row.confidence*100 }}%</td>
         </tr>
       </tbody>
     </table>

@@ -45,24 +45,23 @@
 
     <div class="metrics-grid">
       <div class="metric-card accuracy">
-        <p class="value">{{ metrics.accuracy }}%</p>
+        <p class="value">{{ metrics.accuracy*100 }}%</p>
         <p class="label">Accuracy</p>
       </div>
       <div class="metric-card precision">
-        <p class="value">{{ metrics.precision }}%</p>
+        <p class="value">{{ metrics.precision*100 }}%</p>
         <p class="label">Precision</p>
       </div>
       <div class="metric-card recall">
-        <p class="value">{{ metrics.recall }}%</p>
+        <p class="value">{{ metrics.recall*100 }}%</p>
         <p class="label">Recall</p>
       </div>
       <div class="metric-card f1">
-        <p class="value">{{ metrics.f1 }}%</p>
+        <p class="value">{{ metrics.f1*100 }}%</p>
         <p class="label">F1 Score</p>
       </div>
     </div>
 
-    <p class="footer-note">Model trained on 6 months of data • Validated on 2 months • Ready for 2-month simulation</p>
 </div>
 
 <div class="charts-container" *ngIf="modelTrained">

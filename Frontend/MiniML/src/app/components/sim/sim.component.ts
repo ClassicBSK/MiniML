@@ -94,7 +94,9 @@ export class SimComponent implements OnDestroy {
       this.handleFile(file);
     }
   }
-
+  truncateToTwoDecimals(num: number): number {
+    return Math.trunc(num * 100000) / 100000;
+  }
   private handleFile(file: File): void {
     
     this.selectedFile = file;
@@ -162,6 +164,7 @@ export class SimComponent implements OnDestroy {
       this.simulationData.unshift({"timestamp":sim.timestamp,"prediction":sim.prediction,"confidence":sim.confidence})
       this.stats.avgConfidence =
         ((this.stats.avgConfidence * (this.stats.total - 1)) + sim.confidence) / this.stats.total;
+      this.stats.avgConfidence=this.truncateToTwoDecimals(this.stats.avgConfidence);
       if(this.seenTimeStamps==null){
         this.seenTimeStamps=[]
       }
@@ -190,6 +193,10 @@ export class SimComponent implements OnDestroy {
         break;
       } 
     }
+    this.lineChartData.labels = [...this.seenTimeStamps];
+    this.lineChartData.datasets[0].data = [...this.seenQualityScores];
+    this.donutChartData.datasets[0].data=[this.stats.pass,this.stats.fail]
+    this.charts.forEach(chart => chart.update());
   }catch(err){
     this.router.navigate(["/dashboard"])
   }
@@ -243,7 +250,7 @@ export class SimComponent implements OnDestroy {
       }
       this.simulationData.unshift({"timestamp":sim.timestamp,"prediction":sim.prediction,"confidence":sim.confidence})
       this.stats.avgConfidence =
-        ((this.stats.avgConfidence * (this.stats.total - 1)) + sim.confidence) / this.stats.total;
+        this.truncateToTwoDecimals(((this.stats.avgConfidence * (this.stats.total - 1)) + sim.confidence) / this.stats.total)
       if(this.seenTimeStamps==null){
         this.seenTimeStamps=[]
       }
